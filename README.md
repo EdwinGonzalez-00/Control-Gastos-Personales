@@ -1,3 +1,4 @@
+HEAD
 # control_gastos_personales
 
 A new Flutter project.
@@ -14,3 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+# Control-Gastos-Personales
+Escenario de Evaluación: Desarrollo de una App de Control de Gastos Personales con Flutter
+db7720dd84719f74b74a72c23f9ee0eb1ee6042d
