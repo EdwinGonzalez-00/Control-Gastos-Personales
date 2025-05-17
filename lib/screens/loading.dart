@@ -31,7 +31,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/abeja.png', height: 150),
+            Image.asset('assets/images/1000072614.png', height: 150),
             const SizedBox(height: 20),
             const Text(
               'Control de\nGastos\nPersonales',

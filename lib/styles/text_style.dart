@@ -40,4 +40,21 @@ class AppTextStyles {
     fontSize: 14,
     color: Colors.grey,
   );
+
+  static const cardTitle = TextStyle(
+    fontFamily: 'Quicksand',
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const cardSubtitle = TextStyle(
+    fontFamily: 'Quicksand',
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  static const TextStyle formText =  TextStyle(
+    fontFamily: 'Quicksand',
+    fontSize: 16,
+  );
 }
