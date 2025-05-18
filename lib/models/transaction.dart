@@ -15,7 +15,7 @@ class Transaction {
 
   Map<String, dynamic> toMap() {
     return {
-      'tittle': title,
+      'title': title,
       'category': category,
       'amount': amount,
       'date': date.toIso8601String(),
@@ -25,11 +25,11 @@ class Transaction {
 
   factory Transaction.fromMap(Map<String, dynamic> map) {
     return Transaction(
-      title: map['title'],
-      category: map['category'],
-      amount: map['amount'],
+      title: map['title'] ?? '',
+      category: map['category'] ?? '',
+      amount: (map['amount'] as num).toDouble(),
       date: DateTime.parse(map['date']),
-      isIncome: map['isIncome'],
+      isIncome: map['isIncome'] ?? false,
     );
   }
 

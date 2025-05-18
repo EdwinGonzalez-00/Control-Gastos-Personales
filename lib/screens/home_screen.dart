@@ -1,7 +1,8 @@
-// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:control_gastos_personales/models/transaction.dart';
 import 'package:control_gastos_personales/screens/add_transaction_screen.dart';
 import 'package:control_gastos_personales/screens/statistics_screen.dart';
@@ -14,7 +15,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Transaction> _transactions = [...sampleTransactions];
+  final List<Transaction> _transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactions();
+  }
 
   double get _incomeTotal => _transactions
       .where((t) => t.isIncome)
@@ -25,12 +32,40 @@ class _HomeScreenState extends State<HomeScreen> {
       .fold(0.0, (sum, t) => sum + t.amount);
 
   void _addNewTransaction(Transaction tx) {
-    setState(() => _transactions.add(tx));
+    setState(() {
+      _transactions.add(tx);
+      _transactions.sort((a, b) => b.date.compareTo(b.date));
+    });
+    _saveTransactions();
   }
 
-  void _saveTransactions() {
-    // Solo incluir si estás usando almacenamiento local
+  Future<void> _saveTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final txList = _transactions.map((tx) => tx.toMap()).toList();
+    prefs.setString('transactions', jsonEncode(txList));
   }
+
+  Future<void> _loadTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('transactions');
+
+    if (jsonString != null) {
+      final List decoded = jsonDecode(jsonString);
+      final loadedTxs = 
+          decoded.map((tx) => Transaction.fromMap(tx)).toList();
+
+      setState(() {
+        _transactions
+          ..clear()
+          ..addAll(loadedTxs.cast<Transaction>());
+        _transactions.sort((a, b) => b.date.compareTo(a.date));  
+      });
+    } else {
+      setState(() => _transactions..addAll(sampleTransactions));
+    }
+    
+  }
+
 
   void _showTxOptions(int index) {
     final tx = _transactions[index];
@@ -67,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onPressed: () async {
                       Navigator.pop(context);
-                      await Navigator.push(
+                      final editedTx = await Navigator.push<Transaction>(
                         context,
                         MaterialPageRoute(
                           builder: (_) => AddTransactionScreen(
@@ -75,6 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       );
+                      if (editedTx != null) {
+                        setState(() {
+                          _transactions[index] = editedTx;
+                        });
+                        _saveTransactions();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Transacción actualizada')),
+                        );
+                      }
                     },
                     icon: const Icon(Icons.edit, size: 18),
                     label: const Text('Editar'),
